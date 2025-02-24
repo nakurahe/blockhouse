@@ -41,4 +41,15 @@ jobs:
         docker tag blockhouse_oa:latest 522814699715.dkr.ecr.us-west-2.amazonaws.com/blockhouse_oa:latest
         echo "Pushing docker image to to ECR for ${{ github.event.inputs.environment }}"
         docker push 522814699715.dkr.ecr.us-west-2.amazonaws.com/blockhouse_oa:latest
-        
+
+    - name: SSH into EC2 and deploy
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.EC2_HOSTNAME }}
+        username: ubuntu
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.EC2_SSH_PORT }}
+        script: |
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin 522814699715.dkr.ecr.region.amazonaws.com
+          docker pull 522814699715.dkr.ecr.us-west-2.amazonaws.com/blockhouse_oa
+          docker restart ${{ secrets.CONTAINER_ID }}
