@@ -12,21 +12,28 @@ env:
 jobs:
   build_and_push_to_ecr:
     runs-on: ubuntu-latest
-    environment: Dev
+    environment: Demo
     permissions:
       id-token: write
       contents: read
     steps:
-    - uses: aws-actions/configure-aws-credentials@v4.1.0
+    - uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ secrets.ECR_DEMO_PUSH_ROLE }}
         role-session-name: BlockhouseDemo
         aws-region: ${{ env.AWS_REGION }}
-    - name: Docker login
+    - name: Sts GetCallerIdentity
       run: |
-        aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 522814699715.dkr.ecr.us-west-2.amazonaws.com
-    - uses: actions/checkout@v4
-    - name: Build and tag the Docker image
+        aws sts get-caller-identity
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push docker image to Amazon ECR
       run: |
         echo "Building docker image"
         docker build . --file Dockerfile --tag blockhouse_oa --platform linux/amd64/v3
