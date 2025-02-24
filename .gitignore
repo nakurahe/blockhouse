@@ -4,6 +4,7 @@
 ### Database ###
 *.accdb
 *.db
+!tests/database.db
 *.dbf
 *.mdb
 *.pdb
