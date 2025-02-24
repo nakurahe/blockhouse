@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s) --platform linux/amd64
+      run: docker build . --file Dockerfile --tag blockhouse-app:$(date +%s) --platform linux/amd64/v3
