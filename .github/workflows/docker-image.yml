@@ -6,12 +6,32 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  AWS_REGION: us-west-2
+
 jobs:
-  build_and_push:
+  build_and_push_to_ecr:
     runs-on: ubuntu-latest
-    environment: Demo
+    environment: Dev
+    permissions:
+      id-token: write
+      contents: read
     steps:
+    - uses: aws-actions/configure-aws-credentials@v4.1.0
+      with:
+        role-to-assume: ${{ secrets.ECR_DEMO_PUSH_ROLE }}
+        role-session-name: BlockhouseDemo
+        aws-region: ${{ env.AWS_REGION }}
+    - name: Docker login
+      run: |
+        aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 522814699715.dkr.ecr.us-west-2.amazonaws.com
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag blockhouse-app:$(date +%s) --platform linux/amd64/v3
-  
+    - name: Build and tag the Docker image
+      run: |
+        echo "Building docker image"
+        docker build . --file Dockerfile --tag blockhouse_oa --platform linux/amd64/v3
+        echo "Tagging docker image
+        docker tag blockhouse_oa:latest 522814699715.dkr.ecr.us-west-2.amazonaws.com/blockhouse_oa:latest
+        echo "Pushing docker image to to ECR for ${{ github.event.inputs.environment }}"
+        docker push 522814699715.dkr.ecr.us-west-2.amazonaws.com/blockhouse_oa:latest
+        
