@@ -1,13 +1,12 @@
-from sqlmodel import Field, SQLModel
+from sqlmodel import SQLModel
 from fastapi import WebSocket
 
 
 class Order(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    symbol: str | None = Field(default=None, index=True)
+    symbol: str
     price: float
     quantity: int
-    orderType: str | None = Field(default=None, index=True)
+    orderType: str
 
 
 class ConnectionManager:

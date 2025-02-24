@@ -39,7 +39,7 @@ def create_order(
         logger.exception("Failed to create order: %s", e)
         session.rollback()
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="An error occurred while creating the order."
         )
 

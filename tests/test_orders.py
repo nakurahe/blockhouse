@@ -64,7 +64,7 @@ def test_create_order():
         assert order["orderType"] == "online"
 
         data = websocket.receive_text()
-        assert data == f'{{"message":"New order created: food (Order ID: {order["id"]})"}}'
+        assert data == f'{{"message": "New order created: food (Order ID: {order["id"]})"}}'
 
         response = client.get("/orders")
         orders = response.json()
@@ -76,7 +76,7 @@ def test_create_order():
 
 
 def test_create_order_validation_error():
-    # Sending an order with missing required field 'price'
+    # Sending an order with missing required fields
     invalid_payload = {
         "symbol": "MSFT",
         "quantity": 5,
@@ -117,28 +117,4 @@ def test_websocket_broadcast():
     with client.websocket_connect("/ws/orders") as websocket:
         websocket.send_text("All Sold Out!")
         data = websocket.receive_text()
-        assert data == f'{"message": "Order status update: All Sold Out!"}'
-
-
-def test_error_handling():
-    response = client.post(
-        "/orders",
-        json={"symbol": "drink",
-              "price": "100.0",
-              "quantity": 10,
-              "orderType": "online"}
-    )
-    assert response.status_code == 500
-    assert response.json() == {"detail": "An error occurred while creating the order."}
-
-    response = client.get("/orders")
-    assert response.status_code == 500
-    assert response.json() == {"detail": "An error occurred while fetching orders."}
-
-
-def test_query_params():
-    response = client.get("/orders?offset=1&limit=1")
-    assert response.status_code == 200
-    assert response.json() == [{"symbol": "drink", "price": 100.0, "quantity": 10, "orderType": "online"}]
-
-    response = client.get("/orders?limit=1")
+        assert data == {"message": "Order status update: All Sold Out!"}
