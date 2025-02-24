@@ -28,7 +28,7 @@ jobs:
         python-version: ${{ matrix.node-version }}
 
     - name: Install dependencies
-      run: pip3 install requirements.txt
+      run: pip3 install -r requirements.txt
 
     - name: Run test
       run: cat test.sh
