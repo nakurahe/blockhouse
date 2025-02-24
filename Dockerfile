@@ -4,11 +4,10 @@ WORKDIR /app
 
 COPY main.py .
 COPY requirements.txt .
-COPY database.db .
 
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 EXPOSE 80
 
-CMD ["fastapi", "run", "main.py", "--port", "80"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
