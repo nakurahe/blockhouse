@@ -43,7 +43,7 @@ jobs:
         docker push 522814699715.dkr.ecr.us-west-2.amazonaws.com/blockhouse_oa:latest
 
     - name: SSH into EC2 and deploy
-      uses: appleboy/ssh-action@v1
+      uses: appleboy/ssh-action@v1.2.1
       with:
         host: ${{ secrets.EC2_HOSTNAME }}
         username: ubuntu
