@@ -162,3 +162,15 @@ The database schema consists of a single table, `orders`, with the following col
     The `POST /orders` endpoint uses FastAPI's BackgroundTasks to handle broadcasting so that the client receives a quick response without waiting for the broadcast to complete.
 - **Database:**
     The API uses SQLModel with PostgreSQL (SQLite for testing). Database connection settings are loaded from environment variables via a `.env` file.
+
+## Infrastructure
+- AWS ECR used to store built Docker images
+- GitHub repository environment secrets used to store IAM role ARN (used for pushing to ECR) and SSH credentials
+
+## Areas of improvement
+- Run "Docker build and deploy" step only after tests have succeeded on pushes to main
+- Deployments to EC2 can be secured via either of the following to remove using SSH and exposing SSH port to the internet (GitHub Actions uses [a wide range of dnyamic IP addresses](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-githubs-ip-addresses), making it hard to configure a robust Security Group rule)
+  - a webhook (can use AWS System Manager or ubuntu's webhook), or
+  - via AWS CodeDeploy
+- Deploy to multiple environments with a deployment pipeline
+- Load balancer + auto scaling group can be configured in EC2 to improve service reliability and scalability
