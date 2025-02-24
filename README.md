@@ -129,7 +129,7 @@ pytest tests
 - **Client Usage Example (JavaScript):**
 
     ```javascript
-    const ws = new WebSocket('ws://localhost/ws/orders');
+    const ws = new WebSocket('ws://localhost:80/ws/orders');
 
     ws.onopen = () => {
         console.log('WebSocket connection established.');
