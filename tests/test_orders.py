@@ -9,8 +9,8 @@ DATABASE_URL = f"sqlite:///{TEST_DB_PATH}"
 
 
 engine_test = create_engine(
-    DATABASE_URL, 
-    echo=False, 
+    DATABASE_URL,
+    echo=False,
     connect_args={"check_same_thread": False}
 )
 
@@ -40,3 +40,57 @@ def setup_db():
 def test_get_orders():
     response = client.get("/orders")
     assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_create_order():
+    response = client.post(
+        "/orders",
+        json={"symbol": "food",
+              "price": 150.0,
+              "quantity": 5,
+              "orderType": "off-line"}
+    )
+
+    assert response.status_code == 200
+    order = response.json()
+    assert order["symbol"] == "food"
+    assert order["price"] == 150.0
+    assert order["quantity"] == 5
+    assert order["orderType"] == "off-line"
+
+    response = client.get("/orders")
+    assert response.status_code == 200
+    orders = response.json()
+    assert len(orders) == 1
+    assert orders[0]["symbol"] == "food"
+    assert orders[0]["price"] == 150.0
+    assert orders[0]["quantity"] == 5
+    assert orders[0]["orderType"] == "off-line"
+
+
+def test_websocket_broadcast():
+    with client.websocket_connect("/ws/orders") as websocket:
+        websocket.send_text("All Sold Out!")
+        data = websocket.receive_text()
+        assert data == "Order status update: All Sold Out!"
+
+        response = client.post(
+            "/orders",
+            json={"symbol": "drink",
+                  "price": 100.0,
+                  "quantity": 10,
+                  "orderType": "online"}
+        )
+        order = response.json()
+
+        data = websocket.receive_text()
+        assert data == f"New order created: drink (Order ID: {order['id']})"
+
+        response = client.get("/orders")
+        orders = response.json()
+        assert len(orders) == 2
+        assert orders[1]["symbol"] == "drink"
+        assert orders[1]["price"] == 100.0
+        assert orders[1]["quantity"] == 10
+        assert orders[1]["orderType"] == "online"
