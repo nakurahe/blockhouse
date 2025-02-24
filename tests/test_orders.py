@@ -117,4 +117,4 @@ def test_websocket_broadcast():
     with client.websocket_connect("/ws/orders") as websocket:
         websocket.send_text("All Sold Out!")
         data = websocket.receive_text()
-        assert data == {"message": "Order status update: All Sold Out!"}
+        assert data == '{"message": "Order status update: All Sold Out!"}'
