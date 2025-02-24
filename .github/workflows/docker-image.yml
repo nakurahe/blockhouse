@@ -1,16 +1,14 @@
 name: Docker build and deploy
 
 on:
-  workflow_run:
-    workflows: [Test on push]
+  push:
     branches: [main]
-    types: [completed]
 
 env:
   AWS_REGION: us-west-2
 
 jobs:
-  on-success:
+  build_and_push_to_ecr:
     runs-on: ubuntu-latest
     environment: Demo
     permissions:
