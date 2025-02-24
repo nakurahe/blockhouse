@@ -37,7 +37,7 @@ jobs:
       run: |
         echo "Building docker image"
         docker build . --file Dockerfile --tag blockhouse_oa --platform linux/amd64/v3
-        echo "Tagging docker image
+        echo "Tagging docker image"
         docker tag blockhouse_oa:latest 522814699715.dkr.ecr.us-west-2.amazonaws.com/blockhouse_oa:latest
         echo "Pushing docker image to to ECR for ${{ github.event.inputs.environment }}"
         docker push 522814699715.dkr.ecr.us-west-2.amazonaws.com/blockhouse_oa:latest
