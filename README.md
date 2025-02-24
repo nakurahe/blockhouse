@@ -162,17 +162,3 @@ The database schema consists of a single table, `orders`, with the following col
     The `POST /orders` endpoint uses FastAPI's BackgroundTasks to handle broadcasting so that the client receives a quick response without waiting for the broadcast to complete.
 - **Database:**
     The API uses SQLModel with PostgreSQL (SQLite for testing). Database connection settings are loaded from environment variables via a `.env` file.
-
-## To-Do
-- [x] Server
-    - [x] Implement WebSocket support for real-time order status updates
-
-- [ ] DevOps
-    - [x] Dockerize the application
-    - [ ] Deploy on AWS
-        - [x] EC2 for the server
-        - [ ] Run PostgreSQL on docker
-    - [ ] Implement GitHub actions for CI/CD pipeline
-        - [x] Run tests on PRs
-        - [ ] Build the container image
-        - [ ] SSH into the EC2 instance and deploy the latest version on merge to main
